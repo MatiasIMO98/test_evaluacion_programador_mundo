@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import NavBarComponent from "./NavBarComponent";
 import Table from '@mui/material/Table';
@@ -38,35 +37,16 @@ export default function Mantenedor() {
     const handleAbierto2 = () => { setAbierto2(true) };
     const handleCierre2 = () => setAbierto2(false);
 
-    //inicio traspaso modificar
     const [regiones, setRegiones] = useState([]);
-    const [proUsable, setProUsable] = useState([]);
-    const [ciUsable, setCiUsable] = useState([]);
-    const [regionActual, setRegionActual] = useState();
-    const [provinciaActual, setProvinciaActual] = useState();
-    const [ciudadActual, setCiudadActual] = useState();
-    const [calleActual, setCalleActual] = useState();
+    const [provPorReg, setProvPorReg] = useState([]);
+    const [ciuPorProv, setCiuPorProv] = useState([]);
+    const [regionSelect, setRegionSelect] = useState();
+    const [provinciaSelect, setProvinciaSelect] = useState();
+    const [ciudadSelect, setCiudadSelect] = useState();
+    const [calleSelect, setCalleSelect] = useState();
     const [idModificar, setIdModificar] = useState();
-
-    const getRegiones = async () => {
-        const response = await fetch(`http://tep_v3.test/api/regiones`);
-        const data = await response.json();
-        setRegiones(data);
-        console.log(data);
-
-    }
-    const getProUsable = async (id) => {
-        const respuesta = await fetch(`http://tep_v3.test/api/provinciaPorRegion/${id}`);
-        const data = await respuesta.json();
-        setProUsable(data);
-
-    }
-
-    const getCiUsable = async (id) => {
-        const respuesta = await fetch(`http://tep_v3.test/api/ciudadPorProvincia/${id}`);
-        const data = await respuesta.json();
-        setCiUsable(data);
-    }
+    const [idEliminar, setDeBorrado] = useState();
+    const [filas, setFilas] = useState([]);
 
     const style = {
         position: 'absolute',
@@ -80,46 +60,36 @@ export default function Mantenedor() {
         p: 4,
     };
 
-    const vaciarCampos = () => {
-        setRegionActual();
-        setProvinciaActual();
-        setCiudadActual();
-        setCalleActual();
-    }
-
     useEffect(() => {
         getRegiones();
+        getCalles();
     }, []);
 
-    //fin primera area traspaso modificar
+    const getRegiones = async () => {
+        const response = await fetch(`http://tep_v3.test/api/regiones`);
+        const data = await response.json();
+        setRegiones(data);
+        console.log(data);
+    }
+    const getProvPorReg = async (id) => {
+        const respuesta = await fetch(`http://tep_v3.test/api/provinciaPorRegion/${id}`);
+        const data = await respuesta.json();
+        setProvPorReg(data);
+    }
+    const getCiuPorProv = async (id) => {
+        const respuesta = await fetch(`http://tep_v3.test/api/ciudadPorProvincia/${id}`);
+        const data = await respuesta.json();
+        setCiuPorProv(data);
+    }
 
-
+    const vaciarCampos = () => {
+        setRegionSelect();
+        setProvinciaSelect();
+        setCiudadSelect();
+        setCalleSelect();
+    }
 
     const [notificacion, setNotificacion] = useState(false);
-
-    const handleBorrarDef = () => {
-        borrarCalle(idEliminar);
-        setNotificacion(false);
-    }
-
-    const handleCerrarNotif = () => {
-        setNotificacion(false);
-    }
-
-    const handleClick = () => {
-        setOpen(true);
-    };
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpen(false);
-    };
-
-
-    const [filas, setFilas] = useState([]);
 
     const borrarCalle = (idEliminar) => {
         const response = fetch(`http://tep_v3.test/api/calle/${idEliminar}`, {
@@ -140,10 +110,6 @@ export default function Mantenedor() {
 
     }
 
-    const [idEliminar, setDeBorrado] = useState();
-
-
-
     const getCalles = async () => {
         const response = await fetch(`http://tep_v3.test/api/calleCompleta`);
         const data = await response.json();
@@ -151,17 +117,13 @@ export default function Mantenedor() {
         console.log(data);
     };
 
-    useEffect(() => {
-        getCalles();
-    }, []);
-
     //agraga modificar    
     const cambiarCalle = (idModificar) => {
         const response = fetch(`http://tep_v3.test/api/actualizarCalle/${idModificar}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
 
-            body: JSON.stringify({ nombre: calleActual, ciudad: ciudadActual })
+            body: JSON.stringify({ nombre: calleSelect, ciudad: ciudadSelect })
         }
         ).then((response) => {
             if (response.status === 200) {
@@ -177,24 +139,33 @@ export default function Mantenedor() {
             }
         });
     };
-    //fin modificar
+
+    const handleBorrarDef = () => { borrarCalle(idEliminar); setNotificacion(false); }
+    const handleCerrarNotif = () => { setNotificacion(false); }
+    const handleClick = () => { setOpen(true); };
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
 
     return (
         <div>
-            <NavBarComponent></NavBarComponent>
-            <Button style={{ backgroundColor: "#69a420" }} variant="contained" onClick={handleAbierto}>Ingresar Nueva Calle</Button>
 
+            <NavBarComponent></NavBarComponent>
+            <br></br>
+            <Button style={{ backgroundColor: "#69a420", float: 'right' }} variant="contained" onClick={handleAbierto}>Ingresar Nueva Calle</Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="Calles Existentes">
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell align='right'>Calle</TableCell>
-                            <TableCell align='right'>Ciudad</TableCell>
-                            <TableCell align='right'>Provincia</TableCell>
-                            <TableCell align='right'>Región</TableCell>
-                            <TableCell align='right'>Botones Modificar</TableCell>
-                            <TableCell align='right'>Botones Borrar</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>ID</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Calle</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Ciudad</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Provincia</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Región</TableCell>
+                            <TableCell align='right' style={{ fontWeight: "bold" }}>Controles de acción</TableCell>
                         </TableRow>
 
                     </TableHead>
@@ -206,26 +177,26 @@ export default function Mantenedor() {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">{row.id}</TableCell>
-                                <TableCell align='right'>{row.nombre}</TableCell>
-                                <TableCell align='right'>{row.nombreCiudad}</TableCell>
-                                <TableCell align='right'>{row.nombreProvincia}</TableCell>
-                                <TableCell align='right'>{row.nombreRegion}</TableCell>
+                                <TableCell align='left'>{row.nombre}</TableCell>
+                                <TableCell align='left'>{row.nombreCiudad}</TableCell>
+                                <TableCell align='left'>{row.nombreProvincia}</TableCell>
+                                <TableCell align='left'>{row.nombreRegion}</TableCell>
                                 <TableCell align='right'><Button variant="contained"
                                     onClick={() => {
                                         handleAbierto2();
-                                        getProUsable(row.id);
-                                        getCiUsable(row.provincia);
-                                        setRegionActual(row.id);
-                                        setProvinciaActual(row.provincia);
-                                        setCiudadActual(row.ciudad);
-                                        setCalleActual(row.nombre);
+                                        getProvPorReg(row.region);
+                                        getCiuPorProv(row.provincia);
+                                        setRegionSelect(row.region);
+                                        setProvinciaSelect(row.provincia);
+                                        setCiudadSelect(row.ciudad);
+                                        setCalleSelect(row.nombre);
                                         setIdModificar(row.id);
                                     }}
 
-                                >Modificar</Button></TableCell>
+                                >Modificar</Button>
 
 
-                                <TableCell align='right'><Button color="error" variant="contained" onClick={() => { setNotificacion(true); setDeBorrado(row.id) }}>Borrar</Button></TableCell>
+                                    <Button color="error" variant="contained" onClick={() => { setNotificacion(true); setDeBorrado(row.id) }}>Borrar</Button></TableCell>
                             </TableRow>
                         ))}
 
@@ -240,23 +211,24 @@ export default function Mantenedor() {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
+
                     <Box
                         component="form"
                         sx={style}
                         autoComplete="off"
                     >
-                        <FormControl>
-                            <div>
+                        <div>
+                            <FormControl>
                                 <InputLabel id="Regiones-Disponibles">Región</InputLabel>
                                 <Select
                                     labelId="Regiones-Disponibles"
                                     id="simple-region"
-                                    value={regionActual}
+                                    value={regionSelect}
                                     label="Regiones"
                                     onChange={(event) => {
-                                        setRegionActual(event.target.value);
-                                        getProUsable(event.target.value);
-                                        setCiUsable([])
+                                        setRegionSelect(event.target.value);
+                                        getProvPorReg(event.target.value);
+                                        setCiuPorProv([])
                                     }}
                                 >
                                     {regiones.map((region) => {
@@ -264,42 +236,40 @@ export default function Mantenedor() {
                                         return <MenuItem value={region.id}>{region.nombre}</MenuItem>
                                     })}
                                 </Select>
-                            </div>
-                        </FormControl>
-
-
+                            </FormControl>
+                        </div>
                         <div>
                             <FormControl>
                                 <InputLabel id="Provincias-Disponibles">Provincia</InputLabel>
                                 <Select
                                     labelId="Provincias-Disponibles"
                                     id="simple-provincia"
-                                    value={provinciaActual}
+                                    value={provinciaSelect}
                                     label="Provincias"
                                     onChange={
                                         (event) => {
-                                            setProvinciaActual(event.target.value);
-                                            getCiUsable(event.target.value)
+                                            setProvinciaSelect(event.target.value);
+                                            getCiuPorProv(event.target.value)
                                         }}
                                 >
-                                    {proUsable.map((pro) => {
+                                    {provPorReg.map((pro) => {
                                         return <MenuItem value={pro.id}>{pro.nombre}</MenuItem>
                                     })}
                                 </Select>
                             </FormControl>
                         </div>
-
+                        <br></br>
                         <div>
                             <FormControl>
                                 <InputLabel id="Ciudades-Disponibles">Ciudad</InputLabel>
                                 <Select
                                     labelId="Ciudades-Disponible"
                                     id="simple-ciudad"
-                                    value={ciudadActual}
+                                    value={ciudadSelect}
                                     label="Ciudades"
-                                    onChange={(event) => { setCiudadActual(event.target.value) }}
+                                    onChange={(event) => { setCiudadSelect(event.target.value) }}
                                 >
-                                    {ciUsable.map((ci) => {
+                                    {ciuPorProv.map((ci) => {
                                         return <MenuItem value={ci.id}>{ci.nombre}</MenuItem>
                                     })}
                                 </Select>
@@ -312,8 +282,8 @@ export default function Mantenedor() {
                                 required
                                 id="simple-nombre-calle"
                                 label="Nombre de la calle"
-                                value={calleActual}
-                                onChange={(event) => { setCalleActual(event.target.value) }}
+                                value={calleSelect}
+                                onChange={(event) => { setCalleSelect(event.target.value) }}
                             />
                         </div>
 

@@ -8,10 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-
-
 export default function CallesExistentesComponent() {
-
     const [filas, setFilas] = useState([]);
     const getCalleCompleta = async () => {
         const response = await fetch(`http://tep_v3.test/api/calleCompleta`);
@@ -26,40 +23,30 @@ export default function CallesExistentesComponent() {
     return (
         <div>
             <NavBarComponent></NavBarComponent>
-
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="Calles Existentes">
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell align='right'>Calle</TableCell>
-                            <TableCell align='right'>Ciudad</TableCell>
-                            <TableCell align='right'>Provincia</TableCell>
-                            <TableCell align='right'>Región</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>ID</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Calle</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Ciudad</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Provincia</TableCell>
+                            <TableCell align='left' style={{ fontWeight: "bold" }}>Región</TableCell>
                         </TableRow>
-
                     </TableHead>
-
                     <TableBody>
                         {filas.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
+                            <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                 <TableCell component="th" scope="row">{row.id}</TableCell>
-                                <TableCell align='right'>{row.nombre}</TableCell>
-                                <TableCell align='right'>{row.nombreCiudad}</TableCell>
-                                <TableCell align='right'>{row.nombreProvincia}</TableCell>
-                                <TableCell align='right'>{row.nombreRegion}</TableCell>
+                                <TableCell align='left'>{row.nombre}</TableCell>
+                                <TableCell align='left'>{row.nombreCiudad}</TableCell>
+                                <TableCell align='left'>{row.nombreProvincia}</TableCell>
+                                <TableCell align='left'>{row.nombreRegion}</TableCell>
                             </TableRow>
                         ))}
-
-
                     </TableBody>
                 </Table>
             </TableContainer>
-
-
         </div>
     );
 }
