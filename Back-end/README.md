@@ -10,4 +10,4 @@ Se le recuerda encarecidamente que los nombres de carpetas y archivos que van en
     -   php artisan key:generate
     -   php artisan migrate:fresh
     -   php artisan db:seed
-- Finalmente, debe asegurarse que la API haya quedado montada en la direccion "http://tep_v3.test"
+- Finalmente, debe asegurarse que la API haya quedado montada en la direccion "http://tep_v3.test" en el archivo .env y en la variable APP_URL.
