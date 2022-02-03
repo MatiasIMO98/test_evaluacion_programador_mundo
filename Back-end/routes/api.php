@@ -40,6 +40,7 @@ Route::get('ciudadPorProvincia/{idProvincia}', 'App\Http\Controllers\ciudadContr
 //rutas de calle
 Route::get('calles', 'App\Http\Controllers\calleController@getAllCalle');
 Route::get('calle/{id}', 'App\Http\Controllers\calleController@getCalle');
+Route::get('calleTexto/{calle}', 'App\Http\Controllers\calleController@getCalleTexto');
 Route::post('insertarCalle', 'App\Http\Controllers\calleController@addCalle');
 Route::put('actualizarCalle/{id}', 'App\Http\Controllers\calleController@updateCalle');
 Route::get('calleCompleta/{idCalle}', 'App\Http\Controllers\calleController@getCalleCompleta');

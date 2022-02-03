@@ -24,6 +24,15 @@ class calleController extends Controller
         return response()->json($calle, 200);
     }
 
+    public function getCalleTexto($calleT)
+    {
+        $calle = Calle::where('calles.nombre', 'like', '%' . $calleT . '%')->get();
+        if (!$calle) {
+            return response()->json(['mensaje' => 'No se encuentra la calle'], 404);
+        }
+        return response()->json($calle, 200);
+    }
+
     public function addCalle(Request $request)
     {
         $calle = new Calle();
